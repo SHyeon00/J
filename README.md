@@ -1,2 +1,3 @@
-# J
-asdsadad
+# Jamdream
+cortexys project
+

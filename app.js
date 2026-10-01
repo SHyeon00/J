@@ -150,7 +150,7 @@ function showView(view, focusTarget) {
     sleepView.hidden = view !== sleepView;
     reportView.hidden = view !== reportView;
     document.body.classList.toggle('is-sleeping', view === sleepView);
-    document.querySelector('meta[name="theme-color"]').setAttribute('content', view === sleepView ? '#1c1e21' : '#f5f7f2');
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', view === sleepView ? '#222222' : '#111111');
     window.scrollTo({ top: 0, behavior: 'instant' });
     if (focusTarget) focusTarget.focus({ preventScroll: true });
 }
@@ -207,4 +207,24 @@ document.querySelector('#go-actions').addEventListener('click', () => {
     showView(homeView);
     actionTitle.scrollIntoView({ block: 'center', behavior: 'instant' });
     actionTitle.focus({ preventScroll: true });
+});
+
+document.querySelector('#add-solutions').addEventListener('click', () => {
+    const existingTitles = new Set(Array.from(actionList.querySelectorAll('.action-text'),
+        (item) => item.textContent));
+    let addedCount = 0;
+    reportView.querySelectorAll('.suggestions li strong').forEach((suggestion) => {
+        const title = suggestion.textContent.trim();
+        if (!title || existingTitles.has(title)) return;
+        addAction(title);
+        existingTitles.add(title);
+        addedCount += 1;
+    });
+    if (addedCount > 0) saveActions();
+    showView(homeView);
+    actionTitle.scrollIntoView({ block: 'center', behavior: 'instant' });
+    actionTitle.focus({ preventScroll: true });
+    statusMessage.textContent = addedCount > 0
+        ? `수면 습관 ${addedCount}개를 실천 목록에 추가했습니다.`
+        : '추천 수면 습관이 이미 실천 목록에 있습니다.';
 });

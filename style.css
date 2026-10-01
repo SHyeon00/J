@@ -75,6 +75,8 @@ input::placeholder { font-size: 12px; color: #8d9785; }
 .delete-button { min-height: 40px; flex-shrink: 0; padding: 5px 9px; background: transparent; border: 1px solid var(--line); border-radius: 9px; color: #7c8972; font-size: 12px; }
 .delete-button:hover { color: #9d514b; background: #fff6f4; }
 .empty-message { text-align: center; font-size: 12px; color: #839177; padding: 23px 0 6px; }
+.input-error { color: #a1493f; font-size: 12px; margin-top: 10px; overflow-wrap: anywhere; }
+input[aria-invalid="true"] { border-color: #a1493f; }
 .reset-note { text-align: center; color: #8a9680; font-size: 10px; margin: 20px 0 10px; }
 .footer { text-align: center; color: #8f9b87; font-size: 11px; padding: 12px 0; }
 .bottom-dock { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: min(100%, 440px); padding: 14px 20px max(16px, env(safe-area-inset-bottom)); border-top: 1px solid #e3e9dd; background: #f5f7f2f5; }

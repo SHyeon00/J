@@ -45,11 +45,12 @@
                 </section>
                 <section class="action-card" id="actions" aria-labelledby="actions-title">
                     <div class="action-heading"><p class="eyebrow">오늘의 작은 목표</p><h2 id="actions-title">편안한 밤을 위한 실천</h2><p class="muted small">실천할 행동을 적고, 끝냈다면 완료 표시해 주세요.</p><span id="progress" class="progress-tag" aria-live="polite">0개 중 0개 완료</span></div>
-                    <form id="action-form"><label for="action-title">실천할 행동</label><div class="input-row"><input id="action-title" type="text" placeholder="예: 내일 할 일 정리하기" autocomplete="off"><button class="add-button" type="submit">＋ 추가</button></div></form>
+                    <form id="action-form"><label for="action-title">실천할 행동</label><div class="input-row"><input id="action-title" type="text" placeholder="예: 내일 할 일 정리하기" autocomplete="off" aria-describedby="title-error"><button class="add-button" type="submit">＋ 추가</button></div><p id="title-error" class="input-error" role="alert" hidden></p></form>
+                    <p id="storage-notice" class="input-error" role="alert" hidden></p>
                     <ul id="action-list" class="action-list" aria-label="실천 목록"></ul>
                     <p id="empty-message" class="empty-message">오늘의 작은 목표를 하나 적어 보세요.</p>
                 </section>
-                <p class="reset-note">체험 버전은 새로고침하면 기록과 목록이 초기화됩니다.</p>
+                <p class="reset-note">실천 목록은 같은 브라우저·주소에 저장됩니다.<br>수면 기록은 새로고침하면 초기화됩니다.</p>
                 <footer class="footer">잠드림 · 오늘보다 편안한 내일을 위해</footer>
             </main>
             <div class="bottom-dock"><button id="start-sleep" type="button" class="primary-button"><span aria-hidden="true">☾</span> 수면 시작</button></div>

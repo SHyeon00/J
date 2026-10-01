@@ -4,6 +4,43 @@ const actionList = document.querySelector('#action-list');
 const progress = document.querySelector('#progress');
 const emptyMessage = document.querySelector('#empty-message');
 const statusMessage = document.querySelector('#status');
+const titleError = document.querySelector('#title-error');
+const storageNotice = document.querySelector('#storage-notice');
+const actionsStorageKey = 'study-planner-items';
+
+function showStorageNotice(message) {
+    storageNotice.textContent = message;
+    storageNotice.hidden = false;
+}
+
+function saveActions() {
+    const actions = Array.from(actionList.children, (item) => ({
+        title: item.querySelector('.action-text').textContent,
+        completed: item.classList.contains('completed')
+    }));
+    try {
+        window.localStorage.setItem(actionsStorageKey, JSON.stringify({ version: 1, actions }));
+        storageNotice.hidden = true;
+    } catch {
+        showStorageNotice('실천 목록을 저장하지 못했습니다. 현재 화면에는 반영되지만 새로고침하면 마지막 저장 상태로 돌아갈 수 있습니다.');
+    }
+}
+
+function restoreActions() {
+    try {
+        const savedValue = window.localStorage.getItem(actionsStorageKey);
+        if (savedValue === null) return;
+        const saved = JSON.parse(savedValue);
+        if (saved?.version !== 1 || !Array.isArray(saved.actions)
+            || !saved.actions.every((action) => action && typeof action.title === 'string'
+                && action.title.trim().length > 0 && typeof action.completed === 'boolean')) {
+            throw new Error('저장된 목록 형식이 올바르지 않습니다.');
+        }
+        saved.actions.forEach((action) => addAction(action.title, action.completed));
+    } catch {
+        showStorageNotice('저장된 목록을 불러오지 못해 빈 목록으로 시작합니다. 실천을 추가하면 다시 저장을 시도합니다.');
+    }
+}
 
 function updateProgress() {
     const total = actionList.children.length;
@@ -12,7 +49,7 @@ function updateProgress() {
     emptyMessage.hidden = total > 0;
 }
 
-function addAction(title) {
+function addAction(title, completed = false) {
     const item = document.createElement('li');
     item.className = 'action-item';
 
@@ -21,6 +58,12 @@ function addAction(title) {
     completeButton.className = 'complete-button';
     completeButton.setAttribute('aria-label', '실천 완료 표시');
     completeButton.setAttribute('aria-pressed', 'false');
+    if (completed) {
+        item.classList.add('completed');
+        completeButton.textContent = '✓';
+        completeButton.setAttribute('aria-label', '실천 완료 취소');
+        completeButton.setAttribute('aria-pressed', 'true');
+    }
 
     const text = document.createElement('span');
     text.className = 'action-text';
@@ -39,6 +82,7 @@ function addAction(title) {
         completeButton.setAttribute('aria-label', completed ? '실천 완료 취소' : '실천 완료 표시');
         statusMessage.textContent = completed ? '실천을 완료했습니다.' : '완료 표시를 취소했습니다.';
         updateProgress();
+        saveActions();
     });
 
     deleteButton.addEventListener('click', () => {
@@ -46,6 +90,7 @@ function addAction(title) {
             || item.previousElementSibling?.querySelector('button');
         item.remove();
         updateProgress();
+        saveActions();
         statusMessage.textContent = '선택한 실천을 삭제했습니다.';
         (nextButton || actionTitle).focus();
     });
@@ -57,12 +102,25 @@ function addAction(title) {
 
 actionForm.addEventListener('submit', (event) => {
     event.preventDefault();
-    addAction(actionTitle.value);
+    const title = actionTitle.value.trim();
+    if (!title) {
+        titleError.textContent = '실천할 행동을 입력해 주세요. 공백만으로는 추가할 수 없습니다.';
+        titleError.hidden = false;
+        actionTitle.setAttribute('aria-invalid', 'true');
+        actionTitle.focus();
+        return;
+    }
+    titleError.hidden = true;
+    titleError.textContent = '';
+    actionTitle.removeAttribute('aria-invalid');
+    addAction(title);
+    saveActions();
     actionTitle.value = '';
     actionTitle.focus();
     statusMessage.textContent = '새로운 실천을 추가했습니다.';
 });
 
+restoreActions();
 updateProgress();
 
 const homeView = document.querySelector('#home-view');
